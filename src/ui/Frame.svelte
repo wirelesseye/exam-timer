@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Setup from "./pages/Setup.svelte";
 </script>
 
