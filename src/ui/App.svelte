@@ -1,9 +1,10 @@
 <script lang="ts">
+  import Frame from "./Frame.svelte";
 </script>
 
-<main>
-  Hello world!
-</main>
+<div>
+  <Frame />
+</div>
 
 <style>
 </style>
