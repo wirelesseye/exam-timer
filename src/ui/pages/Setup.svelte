@@ -9,7 +9,7 @@
   let minutes = 0;
 
   $: {
-    backend.setTime(hours * 60 + minutes);
+    backend.setTime(hours * 3600 + minutes * 60);
   }
 </script>
 

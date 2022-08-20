@@ -27,6 +27,14 @@ export default class Question implements QuestionNode {
     this.time = time;
   }
 
+  getMinuteVal() {
+    return Math.floor(this.time / 60);
+  }
+
+  getSecondVal() {
+    return this.time % 60;
+  }
+
   setFixedTime(time: number) {
     this.setTime(time);
     this.timeFixed = true;

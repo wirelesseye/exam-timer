@@ -8,10 +8,38 @@
 
   let mins: String = "";
   let secs: String = "";
+  let isSettingTime = false;
   $: {
-    mins = String(Math.floor(question.getTime())).padStart(2, "0");
-    secs = String((question.getTime() % 1) * 60).padStart(2, "0");
+    mins = String(Math.floor(question.getTime() / 60)).padStart(2, "0");
+    secs = String(question.getTime() % 60).padStart(2, "0");
   }
+
+  const updateMinutes = (event: Event): void => {
+    console.log("hi from minuates");
+    if (event.target instanceof HTMLInputElement) {
+      const newMinutesVal = parseInt(event.target.value, 10);
+      if (!isNaN(newMinutesVal)) {
+        console.log("update?")
+          question.setFixedTime(newMinutesVal * 60 + question.getSecondVal());
+        }
+    }
+  };
+
+  const updateSeconds = (event: Event): void => {
+    console.log("hi from secoands");
+    if (event.target instanceof HTMLInputElement) {
+      const newSecondsVal = parseInt(event.target.value, 10);
+      if (!isNaN(newSecondsVal)) {
+        question.setFixedTime(question.getMinuteVal() * 60 + newSecondsVal);
+      }
+    }
+  };
+
+  const setTime = (event: Event): void => {
+    isSettingTime = !isSettingTime;
+  };
+
+  const handleClickTimeField = (event:Event) => {event?.stopPropagation();}
 </script>
 
 <div class="question-item">
@@ -32,8 +60,39 @@
           bind:value={secs}
           type="text"
           placeholder="ss"
+          on:change={updateSeconds}
         /><span class="time-unit">sec</span>
       </div>
+      <button
+        class="tooltip"
+        on:click={setTime}
+        >Set Time
+        <div
+          class="tooltiptext time-container"
+          class:tooltip-visible={isSettingTime}
+        >
+          <input
+            class="time-field"
+            class:fixed-time={question.isTimeFixed()}
+            class:tooltip-visible={isSettingTime}
+            value={mins}
+            type="text"
+            placeholder="mm"
+            on:click={handleClickTimeField}
+            on:change={updateMinutes}
+            /><span class="time-unit">min</span>
+            <input
+            class="time-field"
+            class:fixed-time={question.isTimeFixed()}
+            class:tooltip-visible={isSettingTime}
+            value={secs}
+            type="text"
+            placeholder="ss"
+            on:click={handleClickTimeField}
+            on:change={updateSeconds}
+          /><span class="time-unit">sec</span>
+        </div>
+      </button>
       <button on:click={() => question.setFixedTime(5)}>Set Time</button>
       <button on:click={() => question.addQuestion()}>Add</button>
       <button on:click={() => question.remove()}>Remove</button>
@@ -85,5 +144,35 @@
 
   .time-unit {
     font-size: 0.8rem;
+  }
+
+  /* Tooltip container */
+  .tooltip {
+    position: relative;
+    display: inline-block;
+  }
+
+  /* Tooltip text */
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    // width: 180px;
+    background-color: rgba(47, 47, 47, 0.76);
+    color: #fff;
+    text-align: center;
+    padding: 6px 8px;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+  }
+
+  /* Show the tooltip text when you mouse over the tooltip container */
+  // .tooltip:focus .tooltiptext {
+  //   visibility: visible;
+  // }
+
+  .tooltip .tooltip-visible {
+    visibility: visible;
   }
 </style>
