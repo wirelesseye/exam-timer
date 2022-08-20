@@ -23,18 +23,18 @@
   {/if}
 </div>
 
-<style>
+<style lang="scss">
   .question-item {
     display: flex;
     flex-direction: column;
+    &:hover {
+      background-color: rgba(0, 0, 0, .1);
+    }
   }
   .question-item-inner {
     display: flex;
     justify-content: space-between;
     padding: 5px;
-  }
-  .question-item:hover {
-    background-color: rgba(0, 0, 0, .1);
   }
   .subquesions-container {
     margin-left: 5px;
