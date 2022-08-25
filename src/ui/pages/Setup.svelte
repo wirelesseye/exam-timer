@@ -20,6 +20,7 @@
     <span>hours</span>
     <input type="number" min="0" bind:value={minutes}>
     <span>minutes</span>
+    <button on:click={() => backend.startTimer()}>Start</button>
   </div>
   <div class="questions-container">
     <p>Questions: </p>

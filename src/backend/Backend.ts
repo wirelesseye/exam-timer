@@ -64,4 +64,11 @@ export default class Backend implements QuestionNode {
   public onUpdate(callback: () => void) {
     this.updateListeners.add(callback);
   }
+
+  public startTimer() {
+    setInterval(() => {
+      this.time++;
+      this.update();
+    } , 1000);
+  }
 }
