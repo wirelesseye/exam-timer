@@ -6,7 +6,7 @@ export default class Question implements QuestionNode {
   private readonly iD: string;
   private readonly parent: QuestionNode;
 
-  private time = 0;
+  private timeAlloc = 0;
   private timeFixed = false;
   private readonly subQuestions = new Map<string, Question>();
 
@@ -19,30 +19,30 @@ export default class Question implements QuestionNode {
     return this.iD;
   }
 
-  getTime() {
-    return this.time;
+  getTimeAlloc() {
+    return this.timeAlloc;
   }
 
-  setTime(time: number) {
-    this.time = time;
+  setTimeAlloc(timeAlloc: number) {
+    this.timeAlloc = timeAlloc;
   }
 
   getMinuteVal() {
-    return Math.floor(this.time / 60);
+    return Math.floor(this.timeAlloc / 60);
   }
 
   getSecondVal() {
-    return this.time % 60;
+    return this.timeAlloc % 60;
   }
 
-  setFixedTime(time: number) {
-    this.setTime(time);
+  setFixedTime(timeAlloc: number) {
+    this.setTimeAlloc(timeAlloc);
     this.timeFixed = true;
     Backend.getInstance().update();
   }
 
   unsetFixedTime() {
-    this.time = 0;
+    this.timeAlloc = 0;
     this.timeFixed = false;
   }
 
@@ -74,15 +74,15 @@ export default class Question implements QuestionNode {
     let numSpecifiedQuesions = 0;
     for (const question of this.subQuestions.values()) {
       if (question.isTimeFixed()) {
-        specifiedTime += question.getTime();
+        specifiedTime += question.getTimeAlloc();
         numSpecifiedQuesions++;
       }
     }
 
-    const averageTime = (this.time - specifiedTime) / (this.subQuestions.size - numSpecifiedQuesions);
+    const averageTime = (this.timeAlloc - specifiedTime) / (this.subQuestions.size - numSpecifiedQuesions);
     for (const question of this.subQuestions.values()) {
       if (!question.isTimeFixed()) {
-        question.setTime(averageTime);
+        question.setTimeAlloc(averageTime);
       }
       question.update();
     }

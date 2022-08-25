@@ -10,8 +10,8 @@
   let secs: String = "";
   let isSettingTime = false;
   $: {
-    mins = String(Math.floor(question.getTime() / 60)).padStart(2, "0");
-    secs = String(question.getTime() % 60).padStart(2, "0");
+    mins = String(Math.floor(question.getTimeAlloc() / 60)).padStart(2, "0");
+    secs = String(question.getTimeAlloc() % 60).padStart(2, "0");
   }
 
   const updateMinutes = (event: Event): void => {
@@ -35,7 +35,7 @@
     }
   };
 
-  const setTime = (event: Event): void => {
+  const setTimeLimit = (event: Event): void => {
     isSettingTime = !isSettingTime;
   };
 
@@ -65,7 +65,7 @@
       </div>
       <button
         class="tooltip"
-        on:click={setTime}
+        on:click={setTimeLimit}
         >Set Time
         <div
           class="tooltiptext time-container"
