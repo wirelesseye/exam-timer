@@ -9,6 +9,7 @@
   let mins: String = "";
   let secs: String = "";
   let isSettingTime = false;
+  let isLocked = false;
   $: {
     mins = String(Math.floor(question.getTimeAlloc() / 60)).padStart(2, "0");
     secs = String(question.getTimeAlloc() % 60).padStart(2, "0");
@@ -19,9 +20,9 @@
     if (event.target instanceof HTMLInputElement) {
       const newMinutesVal = parseInt(event.target.value, 10);
       if (!isNaN(newMinutesVal)) {
-        console.log("update?")
-          question.setFixedTime(newMinutesVal * 60 + question.getSecondVal());
-        }
+        question.allocTime(newMinutesVal * 60 + question.getSecondVal());
+        isLocked = question.isLocked();
+      }
     }
   };
 
@@ -30,7 +31,8 @@
     if (event.target instanceof HTMLInputElement) {
       const newSecondsVal = parseInt(event.target.value, 10);
       if (!isNaN(newSecondsVal)) {
-        question.setFixedTime(question.getMinuteVal() * 60 + newSecondsVal);
+        question.allocTime(question.getMinuteVal() * 60 + newSecondsVal);
+        isLocked = question.isLocked();
       }
     }
   };
@@ -39,51 +41,42 @@
     isSettingTime = !isSettingTime;
   };
 
-  const handleClickTimeField = (event:Event) => {event?.stopPropagation();}
+  const handleClickTimeField = (event: Event) => {
+    event?.stopPropagation();
+  };
 </script>
 
 <div class="question-item">
   <div class="question-item-inner">
     <span>Question {label}</span>
     <div>
-      <div class="time-container" class:fixed-time={question.isTimeFixed()}>
-        <input
-          class="time-field"
-          class:fixed-time={question.isTimeFixed()}
-          bind:value={mins}
-          type="text"
-          placeholder="mm"
-        /><span class="time-unit">min</span>
-        <input
-          class="time-field"
-          class:fixed-time={question.isTimeFixed()}
-          bind:value={secs}
-          type="text"
-          placeholder="ss"
-          on:change={updateSeconds}
-        /><span class="time-unit">sec</span>
+      <div class="time-container" class:fixed-time={isLocked}>
+        <div class="time-display-field" class:fixed-time={isLocked}>
+          {mins}<span class="time-unit">min</span>
+        </div>
+        <div class="time-display-field" class:fixed-time={isLocked}>
+          {secs}<span class="time-unit">sec</span>
+        </div>
       </div>
-      <button
-        class="tooltip"
-        on:click={setTimeLimit}
-        >Set Time
+      <button class="tooltip" on:click={setTimeLimit}
+        >Reallocate
         <div
           class="tooltiptext time-container"
           class:tooltip-visible={isSettingTime}
         >
           <input
-            class="time-field"
-            class:fixed-time={question.isTimeFixed()}
+            class="time-input-field"
+            class:fixed-time={isLocked}
             class:tooltip-visible={isSettingTime}
             value={mins}
             type="text"
             placeholder="mm"
             on:click={handleClickTimeField}
             on:change={updateMinutes}
-            /><span class="time-unit">min</span>
-            <input
-            class="time-field"
-            class:fixed-time={question.isTimeFixed()}
+          /><span class="time-unit">min</span>
+          <input
+            class="time-input-field"
+            class:fixed-time={isLocked}
             class:tooltip-visible={isSettingTime}
             value={secs}
             type="text"
@@ -93,7 +86,21 @@
           /><span class="time-unit">sec</span>
         </div>
       </button>
-      <button on:click={() => question.setFixedTime(5)}>Set Time</button>
+      {#if isLocked}
+        <button
+          on:click={() => {
+            question.unlock();
+            isLocked = question.isLocked();
+          }}>Unlock</button
+        >
+      {:else}
+        <button
+          on:click={() => {
+            question.lock();
+            isLocked = question.isLocked();
+          }}>Lock</button
+        >
+      {/if}
       <button on:click={() => question.addQuestion()}>Add</button>
       <button on:click={() => question.remove()}>Remove</button>
     </div>
@@ -125,7 +132,7 @@
     color: rgb(19, 140, 234);
   }
 
-  input[type="text"].time-field {
+  input[type="text"].time-input-field {
     border: none;
     font-family: monospace;
   }
@@ -136,14 +143,24 @@
     align-items: center;
   }
 
-  .time-field {
+  .time-input-field {
     width: 16px;
     margin: 0 2px 0 4px;
     text-align: right;
   }
 
+  .time-display-field {
+    font-family: monospace;
+    width: 36px;
+    margin: 0 2px 0 4px;
+    text-align: right;
+  }
+
   .time-unit {
+    // display: inline-block;
+    margin-left: 2px;
     font-size: 0.8rem;
+    font-family: initial;
   }
 
   /* Tooltip container */

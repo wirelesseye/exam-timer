@@ -5,8 +5,8 @@
   let backend = Backend.getInstance();
   backend.onUpdate(() => backend = backend);
 
-  let hours = 0;
-  let minutes = 0;
+  let hours = 1;
+  let minutes = 40;
 
   $: {
     backend.setTimeLimit(hours * 3600 + minutes * 60);

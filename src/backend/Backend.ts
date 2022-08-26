@@ -48,18 +48,13 @@ export default class Backend implements QuestionNode {
   }
 
   update() {
-    let specifiedTime = 0;
-    let numSpecifiedQuesions = 0;
-    for (const question of this.questions.values()) {
-      if (question.isTimeFixed()) {
-        specifiedTime += question.getTimeAlloc();
-        numSpecifiedQuesions++;
-      }
-    }
+    let lockedQuestions: Question[] = Array.from(this.questions.values()).filter((question) => question.isLocked());
+    let lockedTime = lockedQuestions.reduce((countingSum, question) => countingSum + question.getTimeAlloc(), 0);
 
-    const averageTime = (this.timeLimit - specifiedTime) / (this.questions.size - numSpecifiedQuesions);
+    const averageTime = (this.timeLimit - lockedTime) / (this.questions.size - lockedQuestions.length);
+
     for (const question of this.questions.values()) {
-      if (!question.isTimeFixed()) {
+      if (!question.isLocked()) {
         question.setTimeAlloc(averageTime);
       }
       question.update();
