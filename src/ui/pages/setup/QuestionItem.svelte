@@ -41,6 +41,8 @@
     isSettingTime = !isSettingTime;
   };
 
+  // To prevent losing focus on the input fields when the user clicks away
+  // from them.
   const handleClickTimeField = (event: Event) => {
     event?.stopPropagation();
   };

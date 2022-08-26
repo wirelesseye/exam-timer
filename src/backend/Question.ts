@@ -36,9 +36,14 @@ export default class Question implements QuestionNode {
   }
 
   allocTime(timeAlloc: number) {
+    let previousTimeAlloc = this.timeAlloc;
     this.setTimeAlloc(timeAlloc);
     this.lock(); // Locking will call update on backend
-    Backend.getInstance().update();
+    let success = Backend.getInstance().update();
+    if (!success) {
+      this.setTimeAlloc(previousTimeAlloc);
+      console.log("Cannot allocate and lock time to last unlocked question.")
+    }
   }
 
   lock() {

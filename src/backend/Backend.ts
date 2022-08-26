@@ -47,11 +47,15 @@ export default class Backend implements QuestionNode {
     return [...this.questions.values()];
   }
 
-  update() {
+  update(): boolean {
     let lockedQuestions: Question[] = Array.from(this.questions.values()).filter((question) => question.isLocked());
     let lockedTime = lockedQuestions.reduce((countingSum, question) => countingSum + question.getTimeAlloc(), 0);
 
+    if (this.questions.size - lockedQuestions.length === 0) {
+      return false;
+    }
     const averageTime = (this.timeLimit - lockedTime) / (this.questions.size - lockedQuestions.length);
+    console.log(averageTime);
 
     for (const question of this.questions.values()) {
       if (!question.isLocked()) {
@@ -61,6 +65,8 @@ export default class Backend implements QuestionNode {
     }
 
     this.updateListeners.forEach(callback => callback());
+
+    return true;
   }
 
   public onUpdate(callback: () => void) {
