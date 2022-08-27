@@ -8,6 +8,6 @@
 
 <style>
   div {
-    background-color: rgb(216, 202, 184);
+    background-color: rgb(240, 236, 231);
   }
 </style>
