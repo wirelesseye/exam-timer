@@ -1,3 +1,4 @@
+import { timeLeft } from "stores/timer-store";
 import Question from "./Question";
 import type QuestionNode from "./QuestionNode";
 
@@ -7,10 +8,14 @@ export default class Backend implements QuestionNode {
   private readonly questions = new Map<string, Question>();
   private readonly updateListeners = new Set<() => void>();
 
-  private timeLimit: number = 0;
+  private timeLimit: number = 100 * 60 + 52;
   private timeCounter: number = 0;
   private counting: boolean = false;
   private intervalId: ReturnType<typeof setInterval> | undefined;
+
+  private constructor() {
+    this.setTimeLimit(100*60 + 52);
+  }
 
   static getInstance() {
     if (!Backend.instance) {
@@ -21,6 +26,7 @@ export default class Backend implements QuestionNode {
 
   setTimeLimit(timeLimit: number) {
     this.timeLimit = timeLimit;
+    timeLeft.set(timeLimit);
     console.log(`set time limit to ${timeLimit}`);
     this.update();
   }
@@ -31,6 +37,14 @@ export default class Backend implements QuestionNode {
 
   getTimeCounter() {
     return this.timeCounter;
+  }
+
+  isCounting() {
+    return this.counting;
+  }
+
+  getTimeLeft() {
+    return this.timeLimit - this.timeCounter;
   }
 
   addQuestion() {
@@ -79,6 +93,7 @@ export default class Backend implements QuestionNode {
       this.intervalId = setInterval(() => {
         this.timeCounter++;
         this.update();
+        timeLeft.update(i => i - 1);
         console.log(this.timeCounter);
       }, 1000);
 

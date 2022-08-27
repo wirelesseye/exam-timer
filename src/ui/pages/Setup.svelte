@@ -2,19 +2,40 @@
   import Backend from "backend/Backend";
   import QuestionList from "./setup/QuestionList.svelte";
   import "styles/tooltip.css";
-
+  import {timeLeft} from "stores/timer-store.js";  
+import { onDestroy } from "svelte";
   let backend = Backend.getInstance();
   backend.onUpdate(() => (backend = backend));
 
-  let hrsDisplay = 1;
-  let minDisplay = 40;
-  let secDisplay = 40;
+  let timeLeftVal = 0;
+  let unsubscribeTimeLeft = timeLeft.subscribe(val => {
+    timeLeftVal = val;
+  });
+
+  let hrsVal = 0;
+  let minsVal = 0;
+  let secsVal = 0;
+  $: {
+    hrsVal = Math.floor(timeLeftVal / 3600);
+    minsVal = Math.floor(timeLeftVal % 3600 / 60);
+    secsVal = timeLeftVal % 60
+    
+      }
+  let hrsDisplay = "--";
+    let minDisplay = "--";
+    let secDisplay = "--";
+  $: {
+    hrsDisplay = String(hrsVal);
+    minDisplay = String(minsVal).padStart(2, "0");
+    secDisplay = String(secsVal).padStart(2, "0");
+    
+      }
 
   let isSettingTime = false;
   let isActive = false;
 
   $: {
-    backend.setTimeLimit(hrsDisplay * 3600 + minDisplay * 60);
+    backend.setTimeLimit(hrsVal * 3600 + minsVal * 60 + secsVal);
   }
 
   const setTimeLimit = (event: Event): void => {
@@ -25,6 +46,15 @@
     isActive = !isActive;
     console.log("oggle active");
   };
+
+  const fetchTimerVal = (): void => {
+    hrsVal = Math.floor(backend.getTimeLeft() / 3600);
+  minsVal = Math.floor(backend.getTimeLeft() % 3600 / 60);
+  secsVal = backend.getTimeLeft() % 60
+
+  }
+
+  onDestroy(unsubscribeTimeLeft);
 </script>
 
 <div>
