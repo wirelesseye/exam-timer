@@ -2,6 +2,7 @@
   import QuestionList from "./QuestionList.svelte";
   import type Question from "backend/Question";
   import Backend from "backend/Backend";
+  import "styles/tooltip.css";
 
   export let question: Question;
   export let label: string;
@@ -37,7 +38,7 @@
     }
   };
 
-  const setTimeLimit = (event: Event): void => {
+  const setTimeAlloc = (event: Event): void => {
     isSettingTime = !isSettingTime;
   };
 
@@ -60,7 +61,7 @@
           {secs}<span class="time-unit">sec</span>
         </div>
       </div>
-      <button class="tooltip" on:click={setTimeLimit}
+      <button class="tooltip" on:click={setTimeAlloc}
         >Reallocate
         <div
           class="tooltiptext time-container"
@@ -165,33 +166,5 @@
     font-family: initial;
   }
 
-  /* Tooltip container */
-  .tooltip {
-    position: relative;
-    display: inline-block;
-  }
-
-  /* Tooltip text */
-  .tooltip .tooltiptext {
-    visibility: hidden;
-    // width: 180px;
-    background-color: rgba(47, 47, 47, 0.76);
-    color: #fff;
-    text-align: center;
-    padding: 6px 8px;
-    border-radius: 6px;
-
-    /* Position the tooltip text - see examples below! */
-    position: absolute;
-    z-index: 1;
-  }
-
-  /* Show the tooltip text when you mouse over the tooltip container */
-  // .tooltip:focus .tooltiptext {
-  //   visibility: visible;
-  // }
-
-  .tooltip .tooltip-visible {
-    visibility: visible;
-  }
 </style>
+

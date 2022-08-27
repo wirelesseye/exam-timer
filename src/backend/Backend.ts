@@ -21,6 +21,7 @@ export default class Backend implements QuestionNode {
 
   setTimeLimit(timeLimit: number) {
     this.timeLimit = timeLimit;
+    console.log(`set time limit to ${timeLimit}`);
     this.update();
   }
 

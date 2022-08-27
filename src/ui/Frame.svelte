@@ -5,3 +5,9 @@
 <div>
   <Setup />
 </div>
+
+<style>
+  div {
+    background-color: rgb(216, 202, 184);
+  }
+</style>
