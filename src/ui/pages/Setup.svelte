@@ -2,13 +2,13 @@
   import Backend from "backend/Backend";
   import QuestionList from "./setup/QuestionList.svelte";
   import "styles/tooltip.css";
-  import {timeLeft} from "stores/timer-store.js";  
-import { onDestroy } from "svelte";
+  import { timeLeft } from "stores/timer-store.js";
+  import { onDestroy } from "svelte";
   let backend = Backend.getInstance();
   backend.onUpdate(() => (backend = backend));
 
   let timeLeftVal = 0;
-  let unsubscribeTimeLeft = timeLeft.subscribe(val => {
+  let unsubscribeTimeLeft = timeLeft.subscribe((val) => {
     timeLeftVal = val;
   });
 
@@ -17,19 +17,17 @@ import { onDestroy } from "svelte";
   let secsVal = 0;
   $: {
     hrsVal = Math.floor(timeLeftVal / 3600);
-    minsVal = Math.floor(timeLeftVal % 3600 / 60);
-    secsVal = timeLeftVal % 60
-    
-      }
+    minsVal = Math.floor((timeLeftVal % 3600) / 60);
+    secsVal = timeLeftVal % 60;
+  }
   let hrsDisplay = "--";
-    let minDisplay = "--";
-    let secDisplay = "--";
+  let minDisplay = "--";
+  let secDisplay = "--";
   $: {
     hrsDisplay = String(hrsVal);
     minDisplay = String(minsVal).padStart(2, "0");
     secDisplay = String(secsVal).padStart(2, "0");
-    
-      }
+  }
 
   let isSettingTime = false;
   let isActive = false;
@@ -49,10 +47,9 @@ import { onDestroy } from "svelte";
 
   const fetchTimerVal = (): void => {
     hrsVal = Math.floor(backend.getTimeLeft() / 3600);
-  minsVal = Math.floor(backend.getTimeLeft() % 3600 / 60);
-  secsVal = backend.getTimeLeft() % 60
-
-  }
+    minsVal = Math.floor((backend.getTimeLeft() % 3600) / 60);
+    secsVal = backend.getTimeLeft() % 60;
+  };
 
   onDestroy(unsubscribeTimeLeft);
 </script>
@@ -103,17 +100,27 @@ import { onDestroy } from "svelte";
       </div>
     </div>
 
-    <div class="time-container">
-      <div class="time-display-field">
-        {minDisplay}<span class="time-unit">min</span>
+    <div class="timer-control-container">
+      <div class="timer-control-btn" id="set-timer-btn" on:click={() => backend.startTimer()}>
+        Set Time
+        <svg>
+          <polygon points="0,0 144,0 144,47 0,47" />
+        </svg>
       </div>
-      <div class="time-display-field">
-        {secDisplay}<span class="time-unit">sec</span>
+      <div class="timer-control-btn" id="start-timer-btn" on:click={() => backend.startTimer()}>
+        Start
+        <svg>
+          <polygon points="0,0 144,0 144,47 0,47" />
+        </svg>
+      </div>
+      <div class="timer-control-btn" id="pause-timer-btn" on:click={() => backend.stopTimer()}>
+        Pause
+        <svg>
+          <polygon points="10,0 134,0 144,10 144,37 134,47 10,47 0,37 0,10" />
+          <!-- <polygon points="0,0 144,0 144,47 0,47" /> -->
+        </svg>
       </div>
     </div>
-
-    <button on:click={() => backend.startTimer()}>Start</button>
-    <button on:click={() => backend.stopTimer()}>Pause</button>
     <div>
       <div>{`Counter: ${backend.getTimeCounter()}`}</div>
     </div>
@@ -283,6 +290,82 @@ import { onDestroy } from "svelte";
     }
     100% {
       stroke-dashoffset: 1600;
+    }
+  }
+
+  .timer-control-container {
+    display: flex;
+    flex-flow: column nowrap;
+    @media screen and (min-width: 473px) {
+      flex-flow: row nowrap;
+    }
+
+    justify-content: space-around;
+    align-items: center;
+    max-width: 548px;
+    height: 3.6rem;
+    margin: 1rem auto;
+
+    .timer-control-btn {
+      transition: all 1.35s cubic-bezier(0.19, 1, 0.22, 1);
+      padding: 0.75rem 1rem;
+      width: 7rem;
+      border: solid rgba(191, 207, 236, 0.672) 2px;
+      position: relative;
+      font-family: "Maven Pro", sans-serif;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+      opacity: 0.8;
+      letter-spacing: 1px;
+      cursor: pointer;
+      &:not(:first-child) {
+        margin-top: 0.6rem;
+      }
+      @media screen and (min-width: 473px) {
+        &:not(:first-child) {
+        margin-top: 0;
+      }
+      }
+      &:hover {
+        // padding: 0.64rem 0.85rem;
+        scale: 0.9;
+        // font-size: 1.4rem;
+        letter-spacing: 1px;
+        transition: all 1.35s cubic-bezier(0.19, 1, 0.22, 1);
+      }
+      &:active {
+        scale: 0.8;
+        font-size: 1.3rem;
+        filter: brightness(90%);
+        transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      svg {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      z-index: -1;
+      }
+      
+    }
+    #set-timer-btn {
+      color: rgb(22, 52, 86);
+      svg polygon {
+        fill: rgba(174, 203, 236, 0.772);
+      }
+    }
+    #start-timer-btn {
+      color: rgba(26, 74, 52, 0.772)    }
+      svg polygon {
+        fill: rgba(190, 239, 216, 0.772);
+      }
+      #pause-timer-btn {
+        color: rgb(73, 49, 19);
+        svg polygon {
+          fill: rgba(239, 217, 190, 0.772);
+        }
     }
   }
 </style>
